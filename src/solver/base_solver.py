@@ -10,10 +10,12 @@ def additional_information(answers_mask, guess, guess_index_map, guess_matrix):
     guess_patterns = guess_matrix[guess_index_map[guess]][answers_mask]
     pattern_counts = np.unique(guess_patterns, return_counts=True)
 
+    space_size_before_guess = np.count_nonzero(answers_mask)
+
     def information(pattern, count):
-        space_size_before_guess = np.count_nonzero(answers_mask)
         space_size_after_guess = np.count_nonzero(np.logical_and(answers_mask, pattern == guess_matrix[guess_index_map[guess]]))
-        return -math.log2(space_size_after_guess / space_size_before_guess) * count / guess_patterns.shape[0]
+        pattern_info = -math.log2(space_size_after_guess / space_size_before_guess) * count / guess_patterns.shape[0]
+        return pattern_info
 
     # For each guess pattern compute the amount of information in bits it gives
     vectorized_information_func = np.frompyfunc(information, 2, 1)
@@ -33,7 +35,7 @@ class BaseSolver:
 
         def print_top_10():
             print("Some suggestions are:")
-            suggestions = self.top_10_suggestions()
+            suggestions = self.top_N_suggestions(10)
             additional_information(self.answers_mask, suggestions[0], self.guess_index_map, self.guess_matrix)
             for i in range(len(suggestions)):
                 print(suggestions[i] + " on average yields " + str(round(additional_information(self.answers_mask, suggestions[i], self.guess_index_map, self.guess_matrix), 2)) + " bits of information")
@@ -45,7 +47,7 @@ class BaseSolver:
             self.answers_mask[np.logical_not(self.wordle.guess_patterns[self.guess_n] == self.guess_matrix[self.guess_index_map[self.wordle.guesses[self.guess_n]]])] = False
             self.guess_n += 1
 
-    def top_10_suggestions(self):
+    def top_N_suggestions(self, n):
         self.update_possible_answers()
         possible_answer_count = self.answers_mask.sum()
-        return np.random.choice(self.possible_answers[self.answers_mask], 10 if possible_answer_count > 10 else possible_answer_count, replace=False)
+        return np.random.choice(self.possible_answers[self.answers_mask], n if possible_answer_count > n else possible_answer_count, replace=False)

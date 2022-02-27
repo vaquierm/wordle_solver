@@ -23,7 +23,7 @@ class SolverBenchmark:
             solver = self.solver_type(wordle, self.possible_guesses, self.possible_answers, self.guess_matrix, self.guess_index_map, self.answer_index_map, self.answers_in_guesses_mask)
 
             while wordle.game_state == 0:
-                wordle.guess(solver.top_10_suggestions()[0])
+                wordle.guess(solver.top_N_suggestions(1)[0])
 
             score[i] = wordle.guess_n
             if math.floor(i / self.possible_answers.shape[0] * 100) > progress:

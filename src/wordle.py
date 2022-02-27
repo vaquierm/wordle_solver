@@ -115,6 +115,12 @@ class Wordle:
         if self.guess_n == 6 and self.game_state != 1:
             self.game_state = -1
 
+    def undo(self):
+        self.game_state = 0
+        self.guesses.pop()
+        self.guess_n -= 1
+        self.guess_patterns.pop()
+
 
 class bcolors:
     GREEN = '\033[92m' #GREEN

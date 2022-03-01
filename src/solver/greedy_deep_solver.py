@@ -15,9 +15,9 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
     def average_score(self, guess, guess_mask, answer_mask, layer, current_min_average_score):
         # Check if there are only a few answers left and return
         answers_left = answer_mask.sum()
-        if answers_left == 1:
+        if answers_left == 1 and guess in self.possible_answers[answer_mask]:
             return 1.0
-        if answers_left == 2:
+        if answers_left == 2 and guess in self.possible_answers[answer_mask]:
             return 1.5
 
         # Find all possible guess patterns that could result from this guess
@@ -40,7 +40,7 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
 
             # If the pattern in fully correct, we only have to make one guess
             if pattern == 33333:
-                average_score += 1
+                average_score += 1 * count / possible_patterns.shape[0]
                 continue
 
             # Get an updated answers mask
@@ -50,6 +50,9 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
             # Get the top guesses
             np.copyto(next_guess_mask, guess_mask)
             next_guesses = self.get_top_guess_suggestions(next_guess_mask, next_answer_mask)
+            if layer == 0:
+                print("Answers left for pattern: " + str(next_answer_mask.sum()))
+                print("Suggestions length: " + str(next_guesses.shape[0]))
             best_score_for_pattern = math.inf
             for guess_index in range(next_guesses.shape[0]):
                 score_for_pattern_for_guess = 1 + self.average_score(next_guesses[guess_index], next_guess_mask, next_answer_mask, layer + 1, best_score_for_pattern - 1)
@@ -64,12 +67,15 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
 
             if layer == 0 and average_score > current_min_average_score:
                 print("No point to continue, saved " + str(len(pattern_counts[0]) - i) + " iterations out of " + str(len(pattern_counts[0])))
+                print("Current best score: " + str(current_min_average_score))
+                print("Current: ", str(average_score))
                 return average_score
 
         return average_score
 
     def get_top_guess_suggestions(self, guesses_mask, answers_mask):
-        if np.sum(answers_mask) == 1:
+        answers_left = np.sum(answers_mask)
+        if answers_left == 1 or answers_left == 2:
             return self.possible_answers[answers_mask]
 
         info_needed_to_narrow_to_one = -math.log2(1 / np.sum(answers_mask))
@@ -104,18 +110,28 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
 
         guesses_mask[potential_guesses_information == 0] = False
 
+        if False and answers_mask.sum() > 10:
+            print("Len: " + str(potential_guesses_information[guesses_mask].shape[0]))
+            print("Avg: " + str(potential_guesses_information[guesses_mask].mean()))
+            print("Std: " + str(potential_guesses_information[guesses_mask].std()))
+            print("Min: " + str(potential_guesses_information[guesses_mask].min()))
+            print("Max: " + str(potential_guesses_information[guesses_mask].max()))
+
         max_info_indexes = np.argpartition(potential_guesses_information, -10)[-10:]
         top_guesses = self.possible_guesses[max_info_indexes]
         return top_guesses[potential_guesses_information[max_info_indexes] != 0]
 
     def top_N_suggestions(self, n: int):
         self.update_possible_answers()
-        if self.wordle.guess_n == 0:
-            return np.array(["soare"])
-        elif self.wordle.guess_n == 1:
-            return np.array(["clint"])
+        #if self.wordle.guess_n == 0:
+            #return np.array(["soare"])
+        #elif self.wordle.guess_n == 1:
+        #    return np.array(["clint"])
 
         top_guesses_suggestions = self.get_top_guess_suggestions(self.guesses_mask, self.answers_mask)
+
+        if self.wordle.guess_n == 0:
+            return top_guesses_suggestions
 
         average_scores = np.array([np.inf for _ in range(top_guesses_suggestions.shape[0])])
         for i in range(top_guesses_suggestions.shape[0]):

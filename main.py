@@ -14,7 +14,7 @@ def main():
     answers = load_file("data/wordle_words.txt")
     guess_matrix = np.loadtxt("data/guess_matrix.csv")
     wordle = Wordle(answers[np.random.randint(0, answers.shape[0])], guesses)
-    #wordle = Wordle("handy", guesses)
+    #wordle = Wordle("wooly", guesses)
     basic_solver = GreedyDeepSolver(wordle, guesses, answers, guess_matrix, create_index_map(guesses), create_index_map(answers), create_answers_in_guesses_mask(answers, guesses))
     wordle.human_play()
     #solver_benchmark = SolverBenchmark(GreedyDeepSolver, guesses, answers, guess_matrix, create_index_map(guesses), create_index_map(answers), create_answers_in_guesses_mask(answers, guesses))

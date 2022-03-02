@@ -8,17 +8,17 @@ from src.wordle import Wordle
 
 
 class GreedyDeepSolver(GreedyAllScopeSolver):
-    def __init__(self, wordle: Wordle, possible_guesses, possible_answers, guess_matrix, guess_index_map, answer_index_map, answers_in_guesses_mask):
+    def __init__(self, wordle: Wordle, possible_guesses, possible_answers, guess_matrix, guess_index_map, answer_index_map, answers_in_guesses_mask, ):
         super().__init__(wordle, possible_guesses, possible_answers, guess_matrix, guess_index_map, answer_index_map, answers_in_guesses_mask)
         self.temp_best_non_answer_guess_index = -1
 
-    def average_score(self, guess, guess_mask, answer_mask, layer, current_min_average_score):
+    def average_and_worst_score(self, guess, guess_mask, answer_mask, layer, current_min_average_score, deep_decision_node):
         # Check if there are only a few answers left and return
         answers_left = answer_mask.sum()
         if answers_left == 1 and guess in self.possible_answers[answer_mask]:
-            return 1.0
+            return 1.0, 1.0
         if answers_left == 2 and guess in self.possible_answers[answer_mask]:
-            return 1.5
+            return 1.5, 2.0
 
         # Find all possible guess patterns that could result from this guess
         possible_patterns = self.guess_matrix[self.guess_index_map[guess]][answer_mask]
@@ -31,6 +31,7 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
         next_guess_mask = np.copy(guess_mask)
 
         average_score = 0
+        worst_score = 0
         if layer == 0:
             print("Guess: " + guess)
             print("Pattern count: " + str(len(pattern_counts[0])))
@@ -41,6 +42,8 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
             # If the pattern in fully correct, we only have to make one guess
             if pattern == 33333:
                 average_score += 1 * count / possible_patterns.shape[0]
+                if worst_score < 1:
+                    worst_score = 1
                 continue
 
             # Get an updated answers mask
@@ -50,28 +53,29 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
             # Get the top guesses
             np.copyto(next_guess_mask, guess_mask)
             next_guesses = self.get_top_guess_suggestions(next_guess_mask, next_answer_mask)
-            if layer == 0:
-                print("Answers left for pattern: " + str(next_answer_mask.sum()))
-                print("Suggestions length: " + str(next_guesses.shape[0]))
+
             best_score_for_pattern = math.inf
             for guess_index in range(next_guesses.shape[0]):
-                score_for_pattern_for_guess = 1 + self.average_score(next_guesses[guess_index], next_guess_mask, next_answer_mask, layer + 1, best_score_for_pattern - 1)
+                score_for_pattern_for_guess, _ = self.average_and_worst_score(next_guesses[guess_index], next_guess_mask, next_answer_mask, layer + 1, best_score_for_pattern - 1, deep_decision_node)
+                score_for_pattern_for_guess += 1
+
                 if best_score_for_pattern > score_for_pattern_for_guess:
                     best_score_for_pattern = score_for_pattern_for_guess
-                if best_score_for_pattern == 2:
-                    # this should mean that we no longer want to explore guesses that are not in the answer set
-                    break
 
             # Add the the average score of this guess
             average_score += count * best_score_for_pattern / possible_patterns.shape[0]
 
-            if layer == 0 and average_score > current_min_average_score:
+            # Check if this pattern could lead to bad results
+            if worst_score < best_score_for_pattern:
+                worst_score = best_score_for_pattern
+
+            if False and layer == 0 and average_score > current_min_average_score:
                 print("No point to continue, saved " + str(len(pattern_counts[0]) - i) + " iterations out of " + str(len(pattern_counts[0])))
                 print("Current best score: " + str(current_min_average_score))
                 print("Current: ", str(average_score))
                 return average_score
 
-        return average_score
+        return average_score, worst_score
 
     def get_top_guess_suggestions(self, guesses_mask, answers_mask):
         answers_left = np.sum(answers_mask)
@@ -133,15 +137,23 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
         if self.wordle.guess_n == 0:
             return top_guesses_suggestions
 
+        deep_decision_tree = DeepDecisionNode("", 0, 0)
+
         average_scores = np.array([np.inf for _ in range(top_guesses_suggestions.shape[0])])
+        worst_scores = np.array([np.inf for _ in range(top_guesses_suggestions.shape[0])])
         for i in range(top_guesses_suggestions.shape[0]):
-            # Make it so that when you get the answer your information is higher than if you narrow it down to 1
-            # Don't compute the information if there is only one answer
-            # If the information you get is enough to narrow down to 0 stop
-            # If the first score is 2 there is no point checking another word not in the answer set. make a smarter chosing of words
-            # Need a better priority than just checking the n most ifo words especially if there is no filtering for words in the answer set doing better
-            average_scores[i] = self.average_score(top_guesses_suggestions[i], self.guesses_mask, self.answers_mask, 0, average_scores.min())
-            print(top_guesses_suggestions[i] + ": " + str(average_scores[i]))
+            average_scores[i], worst_scores[i] = self.average_and_worst_score(top_guesses_suggestions[i], self.guesses_mask, self.answers_mask, 0, average_scores.min(), deep_decision_tree)
+            print(top_guesses_suggestions[i] + " avg: " + str(average_scores[i]))
+            print(top_guesses_suggestions[i] + " worst: " + str(worst_scores[i]))
 
         return_count = average_scores.shape[0] if average_scores.shape[0] < n else n
         return top_guesses_suggestions[np.argsort(average_scores)][:return_count]
+
+
+class DeepDecisionNode:
+    def __init__(self, guess, average_score, worst_case_avg_score, patterns_from_guess):
+        self.guess = guess
+        self.average_score = average_score
+        self.worst_case_avg_score = worst_case_avg_score
+        self.patterns_from_guess = patterns_from_guess
+        self.children = {}

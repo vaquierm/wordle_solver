@@ -34,6 +34,7 @@ class BaseSolver:
         self.wordle = wordle
 
         def print_top_10():
+            print(str(self.answers_mask.sum()) + " possible answer(s) left")
             print("Some suggestions are:")
             suggestions = self.top_N_suggestions(10)
             additional_information(self.answers_mask, suggestions[0], self.guess_index_map, self.guess_matrix)

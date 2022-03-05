@@ -1,8 +1,6 @@
 import math
 
 import numpy as np
-import json
-import pickle
 
 from src.solver.base_solver import additional_information
 from src.solver.greedy_all_scope_solver import GreedyAllScopeSolver
@@ -15,7 +13,17 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
         self.temp_best_non_answer_guess_index = -1
         self.deep_decision_tree = deep_decision_tree if deep_decision_tree is not None else {}
 
-    def average_and_worst_score(self, guess, guess_mask, answer_mask, layer, current_min_average_score, deep_decision_nodes):
+        def print_top_10():
+            suggestions = self.top_N_suggestions(10)
+            decision_tree = self.get_current_decision_tree()
+            print(str(self.answers_mask.sum()) + " possible answer(s) left")
+            print("Some suggestions are:")
+            for i in range(len(suggestions)):
+                average_score, worst_average_score = self.average_and_worst_score(suggestions[i], self.guesses_mask, self.answers_mask, decision_tree)
+                print(suggestions[i] + " on average will lead to a solve in " + str(round(average_score, 2)) + " guesses")
+        self.wordle.pre_move_print = print_top_10
+
+    def average_and_worst_score(self, guess, guess_mask, answer_mask, deep_decision_nodes):
         # Check if there are only a few answers left and return
         answers_left = answer_mask.sum()
         if answers_left == 1 and guess in self.possible_answers[answer_mask]:
@@ -65,7 +73,7 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
 
             best_score_for_pattern = math.inf
             for guess_index in range(next_guesses.shape[0]):
-                score_for_pattern_for_guess, _ = self.average_and_worst_score(next_guesses[guess_index], next_guess_mask, next_answer_mask, layer + 1, best_score_for_pattern - 1, children_for_pattern)
+                score_for_pattern_for_guess, _ = self.average_and_worst_score(next_guesses[guess_index], next_guess_mask, next_answer_mask, children_for_pattern)
                 score_for_pattern_for_guess += 1
 
                 if best_score_for_pattern > score_for_pattern_for_guess:
@@ -143,12 +151,12 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
             top_guesses_suggestions = self.get_top_guess_suggestions(self.guesses_mask, self.answers_mask)
         else:
             # Get keys from tree dict
-            top_guesses_suggestions = decision_tree.keys()
+            top_guesses_suggestions = np.array(list(decision_tree.keys()))
 
         average_scores = np.array([np.inf for _ in range(top_guesses_suggestions.shape[0])])
         worst_scores = np.array([np.inf for _ in range(top_guesses_suggestions.shape[0])])
         for i in range(top_guesses_suggestions.shape[0]):
-            average_scores[i], worst_scores[i] = self.average_and_worst_score(top_guesses_suggestions[i], self.guesses_mask, self.answers_mask, self.wordle.guess_n, average_scores.min(), decision_tree)
+            average_scores[i], worst_scores[i] = self.average_and_worst_score(top_guesses_suggestions[i], self.guesses_mask, self.answers_mask, decision_tree)
 
         return_count = average_scores.shape[0] if average_scores.shape[0] < n else n
 

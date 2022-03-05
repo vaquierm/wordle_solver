@@ -45,4 +45,3 @@ class GreedyAllScopeSolver(BaseSolver):
         if np.max(sorted_information) > 0:
             potential_answers = potential_answers[sorted_information != 0]
         return potential_answers if potential_answers.shape[0] < n else potential_answers[:n]
-

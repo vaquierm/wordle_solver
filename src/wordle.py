@@ -53,6 +53,13 @@ class Wordle:
             raise Exception("Target word must be of length 5")
         self.possible_guesses = possible_guesses
 
+    def get_result_pattern_from_human(self):
+        valid_pattern = False
+        while not valid_pattern:
+            user_guess = input("Enter the pattern you obtained using the characters G Y _\n")
+            if len(user_guess) != 5:
+                continue
+
     def human_play(self):
         while self.game_state == 0:
             valid_guess = False

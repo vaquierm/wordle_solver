@@ -32,6 +32,7 @@ class BaseSolver:
         self.answer_index_map = answer_index_map
         self.answers_in_guesses_mask = answers_in_guesses_mask
         self.wordle = wordle
+        self.name = "Random Solver"
 
         def print_top_10():
             print(str(self.answers_mask.sum()) + " possible answer(s) left")

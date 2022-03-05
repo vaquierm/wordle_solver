@@ -12,6 +12,7 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
         super().__init__(wordle, possible_guesses, possible_answers, guess_matrix, guess_index_map, answer_index_map, answers_in_guesses_mask)
         self.temp_best_non_answer_guess_index = -1
         self.deep_decision_tree = deep_decision_tree if deep_decision_tree is not None else {}
+        self.name = "Deep Solver"
 
         def print_top_10():
             suggestions = self.top_N_suggestions(10)
@@ -31,7 +32,7 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
         if answers_left == 2 and guess in self.possible_answers[answer_mask]:
             return 1.5, 2.0
 
-        if guess in deep_decision_nodes:
+        if guess in deep_decision_nodes and "average_score" in deep_decision_nodes[guess] and "worst_case_avg_score" in deep_decision_nodes[guess]:
             return deep_decision_nodes[guess]["average_score"], deep_decision_nodes[guess]["worst_case_avg_score"]
 
         # Find all possible guess patterns that could result from this guess
@@ -139,6 +140,8 @@ class GreedyDeepSolver(GreedyAllScopeSolver):
             if self.wordle.guesses[i] not in decision_tree:
                 decision_tree[self.wordle.guesses[i]] = {"children": {}}
                 decision_tree[self.wordle.guesses[i]]["children"][self.wordle.guess_patterns[i]] = {}
+            if self.wordle.guess_patterns[i] not in decision_tree[self.wordle.guesses[i]]["children"]:
+                return {}
             decision_tree = decision_tree[self.wordle.guesses[i]]["children"][self.wordle.guess_patterns[i]]
         return decision_tree
 

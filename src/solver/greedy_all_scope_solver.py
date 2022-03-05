@@ -8,6 +8,7 @@ class GreedyAllScopeSolver(BaseSolver):
     def __init__(self, wordle: Wordle, possible_guesses, possible_answers, guess_matrix, guess_index_map, answer_index_map, answers_in_guesses_mask):
         super().__init__(wordle, possible_guesses, possible_answers, guess_matrix, guess_index_map, answer_index_map, answers_in_guesses_mask)
         self.guesses_mask = np.array([True for _ in range(possible_guesses.shape[0])], dtype=bool)
+        self.name = "Greedy All Scope Solver"
 
     def top_N_suggestions(self, n):
         self.update_possible_answers()

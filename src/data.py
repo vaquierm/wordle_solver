@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+import pickle
 import os
 from src.wordle import compute_guess
 
@@ -16,6 +17,18 @@ def create_index_map(data):
     for i in range(data.shape[0]):
         index_map[data[i]] = i
     return index_map
+
+
+def load_deep_decision_tree(file_path: str):
+    if not os.path.isfile(file_path):
+        return {}
+    pickle_file = open(file_path, 'rb')
+    return pickle.load(pickle_file)
+
+
+def save_deep_decision_tree(file_path: str, decision_tree):
+    pickle_file = open(file_path, 'wb')
+    pickle.dump(decision_tree, pickle_file)
 
 
 def create_answers_in_guesses_mask(answers, guesses):

@@ -13,8 +13,8 @@ class GreedyAllScopeSolver(BaseSolver):
     def top_N_suggestions(self, n):
         self.update_possible_answers()
 
-        #if self.wordle.guess_n == 0:
-        #    return np.array(["raise"])
+        if self.wordle.guess_n == 0:
+            return np.array(["soare"])
 
         def information(guess):
             return additional_information(self.answers_mask, guess, self.guess_index_map, self.guess_matrix)

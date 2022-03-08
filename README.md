@@ -194,7 +194,7 @@ In a case like this, guessing the word "twerp", "tophs", or "tweep" are much bet
 
 ## The best opener
 
-The best opener in theory is "salet" which if playing optimally will be able to solve the wordle puzzle in 3.42 guesses. But again, this is only if you play perfectly optimally which as a human you will not be able to do. In short, you shouldn't just use "salet" because it is "the best opener". You should use an opener that you like, and that contains letters that you are confident playing off of for your second guess. If you find that when one of the letters of your opener lights up green or yellow and you often find yourself struggling to find a good second guess, consider using a different opener that does not contain that word.
+The best opener in theory is "salet" which if playing optimally will be able to solve the wordle puzzle in 3.42 guesses. But again, this is only if you play perfectly optimally which as a human you will not be able to do. In short, you shouldn't just use "salet" because it is "the best opener". You should use an opener that you like, and that contains letters that you are confident playing off of for your second guess. If you find that when one of the letters of your opener lights up green or yellow and you often find yourself struggling to find a good second guess, consider using a different opener that does not contain those letters.
 
 Here is a list of the top 10 best openers. Chose one that you like, and if it isn't working out for you, use one that differs slightly! The performance difference is so small that any of them will feel virtually the same, it's all about how well you're able to play your second guess of the first revealed pattern!
 

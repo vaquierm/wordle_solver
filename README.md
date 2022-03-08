@@ -2,7 +2,9 @@
 
 You've probably heard of wordle by now. But if you haven't it's like mastermind but with words. You're trying to guess a secret 5 letter word. And as you make your guesses you will know if each letter in your guess either exist in the secret word but are not in the correct position, or exist in the word and are at the correct position or they do not exist in the word at all. You then have 6 guesses to figure out the secret word.
 
-WORDLE IMAGE HERE
+<p align="center">
+  <img src="img/wordle.png" width="600" />
+</p>
 
 But is there an optimal strategy to most effectively solve a wordle puzzle? What are easy to follow tips to be closer to this optimal strategy? AND WHAT IS THE BEST OPENER??
 
@@ -12,7 +14,9 @@ We will try to answer all these questions by comparing different solving strateg
 
 The random solver is a solver that will simply play a random guess that could still be the answer. As we get more information on the hidden word based on the patterns, the number of words that could possibly be the answer is reduced. The solver will play randomly amongst this set. We will use this as a baseline to make sure that the strategies we come up with are able to at least perform better than playing randomly. This is probably somewhat close to how many (beginner?) humans play the game as they play the first word that comes to mind that does not violate the previously obtained pattern. (Not using grayed out letters, using all yellow and green letters previously obtained)
 
-RANDOM SOLVER PICTURE
+<p align="center">
+  <img src="img/random_solver_perf.png" width="600" />
+</p>
 
 The average score obtained is just over 4 guesses. This is suprisingly pretty good for guessing randomly which really highlights that the patterns we obtain from each guess can give us lots of information about what words are not the answer. However, this staregy does lead to around 1.5% of puzzles not getting solved in the maximum of 6 guesses to win the game.
 
@@ -24,7 +28,9 @@ This next stategy is the first to make use of information theory. In short, we w
 
 The Greedy Answer Score Solver will guess using the guess guess that eliminates the most number of words but again only guessing with words that can still potentially be the answer. So this would be close to the optimal strategy when only picking words that don't violate the previously revealed patterns. (Never using grayed out letters for future guesses, always using all yellow and green letters)
 
-ANS SCOPE SOLVER PICTURE
+<p align="center">
+  <img src="img/answer_scope_solver_perf.png" width="600" />
+</p>
 
 Making use of information theory greatly helped with the performance. The average number of guesses decreased to 3.6! But we can still see a few games where the hidden word was never found. So what is going on? Let's look at one of the failures to understands the drawbacks of the strategy.
 
@@ -66,7 +72,9 @@ The greedy All Guesses Scope Solver is similar to the previous solver. It also u
 
 This time, the opener is slightly different as we also consider words that are not part of the answer set. The word that on average narrows down the answer the most ended up being "soare". This guess will on average narrow down the answer from 2301 words down to 38.8 words. (Slightly better than 40.14 we were previously getting with "crate")
 
-ALL SOLVER PICTURE
+<p align="center">
+  <img src="img/all_scope_solver_perf.png" width="600" />
+</p>
 
 Allowing our solver to make guesses that do not respect the previously revealed patterns from old guesses leads to a much better performance of 3.4 guesses on average! It is finally able to consistently solve every wordle. Unsurprisingly, the number of games where the hidden word is guessed in 2 guesses has decreased since we are now guessing words that could not possibly be the answer based on previously revealed patterns. But this cost is worth it since the overall performance is what we are trying to optimize for.
 
@@ -123,7 +131,9 @@ For example, there is no point considering the word "fuzzy" as an opener guess w
 By exploring only guesses that are able to on average most effectively narrow down the possible answers, we determined that "salet" is the most optimal wordle opener.
 
 
-DEEP SOLVER PICTURE
+<p align="center">
+  <img src="img/deep_solver_perf.png" width="600" />
+</p>
 
 We can see that the overall performance is ever so slightly better averaging with a score of 3.42 guesses. We can see a slight decrease in scores of 4 and an increase in scores of 2. This is essentially the theoretical limit of wordle **\*\***.
 

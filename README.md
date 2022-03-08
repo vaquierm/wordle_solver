@@ -53,7 +53,7 @@ On the second guess, instead of guessing "caste" which contains an "s" and has a
   <img src="img/all_scope_solution.png" width="90" />
 </p>
 
-On the second guess, guessing "thumb" confirmed that our word has a "t" and an "b" which none of the 9 possible words ("baste", "caste", "haste", "paste", "salve", "sauce", "saute", "taste", "waste") had narrowing down the possible answers only to "baste" solving the wordle.
+On the second guess, guessing "thumb" confirmed that our word has a "t" and an "b" which only one of the 9 possible words ("baste", "caste", "haste", "paste", "salve", "sauce", "saute", "taste", "waste") had, narrowing down the possible answers only to "baste" solving the wordle. And if we would have gotten a different pattern, it would have narrowed things down to a different word. Or if we are unlucky, it would have narrowed it down to two words.
 
 This is interesting as it demonstrates that you can obtain more information by guessing something that does not follow the patterns that were previously revealed by your old guesses. Let's see how much using this strategy batters the overall performance.
 

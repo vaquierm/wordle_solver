@@ -36,17 +36,10 @@ Making use of information theory greatly helped with the performance. The averag
 
 For example the solver failed when the hidden word was **"baste"** here is how the game went.
 
-r <span style="color:green">a</span> i <span style="color:#cec535">s</span> <span style="color:green">e</span>
 
-c <span style="color:green">a</span> <span style="color:green">s</span> <span style="color:green">t</span> <span style="color:green">e</span>
-
-w <span style="color:green">a</span> <span style="color:green">s</span> <span style="color:green">t</span> <span style="color:green">e</span>
-
-t <span style="color:green">a</span> <span style="color:green">s</span> <span style="color:green">t</span> <span style="color:green">e</span>
-
-p <span style="color:green">a</span> <span style="color:green">s</span> <span style="color:green">t</span> <span style="color:green">e</span>
-
-h <span style="color:green">a</span> <span style="color:green">s</span> <span style="color:green">t</span> <span style="color:green">e</span>
+<p align="left">
+  <img src="img/answer_scope_solver_fail.png" width="90" />
+</p>
 
 The first guess "raise" gets 2 greens and a yellow. Great start. This actually decreased the number of possible answers from 2302 down to 9 possible words fitting that pattern. ("baste", "caste", "haste", "paste", "salve", "sauce", "saute", "taste", "waste")
 
@@ -56,11 +49,9 @@ So far, we have only limited the words we guess to words that could potentially 
 
 On the second guess, instead of guessing "caste" which contains an "s" and has an "a" and "e" at the second and fifth position respectively, what if we guessed something that does not respect this pattern but still on average narrows down the answers the most. The best word that comes out is "thumb". On average guessing this word would decrease the number of possible answers from 9 down to 1.44 (much better than the 2.43 answers that "caste" offered) which means that more often than not, the resulting pattern will give us enough information to narrow it down to 1 answer. In this case, the game goes like this.
 
-r <span style="color:green">a</span> i <span style="color:#cec535">s</span> <span style="color:green">e</span>
-
-<span style="color:#cec535">t</span> h u m <span style="color:#cec535">b</span>
-
-<span style="color:green">b</span> <span style="color:green">a</span> <span style="color:green">s</span> <span style="color:green">t</span> <span style="color:green">e</span>
+<p align="left">
+  <img src="img/all_scope_solution.png" width="90" />
+</p>
 
 On the second guess, guessing "thumb" confirmed that our word has a "t" and an "b" which none of the 9 possible words ("baste", "caste", "haste", "paste", "salve", "sauce", "saute", "taste", "waste") had narrowing down the possible answers only to "baste" solving the wordle.
 
@@ -82,18 +73,9 @@ But can we do better? We are computing which guess on average will narrow down t
 
 For example, when the hidden word was "rarer", this is how the game played out.
 
-s o <span style="color:#cec535">a</span> <span style="color:#cec535">r</span> <span style="color:#cec535">e</span>
-
-t <span style="color:green">a</span> l a <span style="color:green">r</span>
-
-p y g m y
-
-f <span style="color:#cec535">r</span> o c k
-
-w <span style="color:green">a</span> v <span style="color:green">e</span> <span style="color:green">r</span>
-
-<span style="color:green">r</span> <span style="color:green">a</span> <span style="color:green">r</span> <span style="color:green">e</span> <span style="color:green">r</span>
-
+<p align="left">
+  <img src="img/all_scope_fail.png" width="90" />
+</p>
 
 On the first guess, our opener "soare" gets 3 yellows then the second guess "talar" gets 2 greens which narrows down the answer from 2301 words down to 15 words. ("baker", "caper", "eager", "gamer", "gayer", "gazer", "maker", "paper", "parer", "payer", "racer", "rarer", "wafer", "wager", "waver")
 
@@ -107,15 +89,9 @@ On average by playing optimally, when guessing "pygmy" on the third guess, we wo
 
 Here is how the rest of the game would have gone:
 
-s o <span style="color:#cec535">a</span> <span style="color:#cec535">r</span> <span style="color:#cec535">e</span>
-
-t <span style="color:green">a</span> l a <span style="color:green">r</span>
-
-g <span style="color:green">a</span> w k y
-
-<span style="color:green">r</span> <span style="color:green">a</span> c <span style="color:green">e</span> <span style="color:green">r</span>
-
-<span style="color:green">r</span> <span style="color:green">a</span> <span style="color:green">r</span> <span style="color:green">e</span> <span style="color:green">r</span>
+<p align="left">
+  <img src="img/deep_solver_solution.png" width="90" />
+</p>
 
 So we end up doing slightly better on this particularly hard to solve word. But this is only one example, what happens when we always take the path that optimizes the average wordle solve score rather than just looking to on average narrow down the possible answers for the next guess?
 
@@ -150,7 +126,9 @@ On your second guess, try not to reuse any of the letters from the first guess. 
 
 For example when the opener yields the pattern:
 
-s <span style="color:green">a</span> l <span style="color:#cec535">e</span> t
+<p align="left">
+  <img src="img/second_guess_example.png" width="90" />
+</p>
 
 Here, you might be tempted to guess something that does not violate the pattern using all the greens. The best guess of sorts would be "range" which on average if continuing with that strategy would solve the wordle in 3.5 guesses. But in fact, the top 10 best second guess from this pattern is:
 
@@ -205,7 +183,9 @@ So the more words you can think of fit the 4 greens pattern, the less likely you
 
 For example, when we get the pattern:
 
-c <span style="color:green">a</span> <span style="color:green">s</span> <span style="color:green">t</span> <span style="color:green">e</span>
+<p align="left">
+  <img src="img/four_greens_example.png" width="90" />
+</p>
 
 There are still 5 possible words that can fit this 4 greens pattern. "baste", "haste", "paste", "taste", "waste". In this case, on average you will be getting the correct answer on your 3rd guess. And remember that this is an expected score, if you are running out of guesses you might not even be able to find which one is the hidden word.
 

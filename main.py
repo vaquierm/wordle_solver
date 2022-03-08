@@ -49,7 +49,7 @@ def counts(deep_decision_tree):
 
 def human_play_random_word(guesses, answers, guess_matrix, deep_decision_tree, suggestions, post_guess_analysis):
     wordle = Wordle(answers[np.random.randint(0, answers.shape[0])], guesses)
-    wordle = Wordle("baste", guesses)
+    wordle = Wordle("hoard", guesses)
     if suggestions or post_guess_analysis:
         GreedyDeepSolver(wordle, guesses, answers, guess_matrix, create_index_map(guesses), create_index_map(answers), create_answers_in_guesses_mask(answers, guesses), deep_decision_tree)
     wordle.human_play()
